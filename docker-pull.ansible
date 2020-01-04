@@ -1,0 +1,22 @@
+---
+- name: Configure base development server configuration
+  connection: local
+  #connection: network_cli
+  gather_facts: true
+  hosts: all
+  #become: true
+  tasks:
+
+    - name: print run datetime
+      debug:
+        msg: "running setup on host {{ ansible_facts['hostname'] }} using {{ ansible_facts['lsb']['description'] }} at {{ ansible_facts['date_time']['time'] }} on the {{ ansible_facts['date_time']['date'] }}"
+
+    - name: Log into DockerHub
+      docker_login:
+        username: mgreville
+        password: 64^y4XuyV/Ja
+
+    - name: pull an image
+      docker_image:
+        name: alpine:latest
+        source: pull

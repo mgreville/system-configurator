@@ -1,0 +1,106 @@
+---
+- name: Configure base development server configuration
+  connection: local
+  #connection: network_cli
+  gather_facts: true
+  hosts: all
+  #become: true
+  tasks:
+
+    - name: print run datetime
+      debug:
+        msg: "running setup on host {{ ansible_facts['hostname'] }} using {{ ansible_facts['lsb']['description'] }} at {{ ansible_facts['date_time']['time'] }} on the {{ ansible_facts['date_time']['date'] }}"
+
+# Users
+    - name: Add the user 'mgreville'
+      user:
+        name: mgreville
+        state: present
+        home: /home/mgreville
+        comment: Marcus Greville
+        shell: /bin/bash
+        uid: 1000
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+# Software
+    - name: install vim
+      apt: name=vim state=latest force_apt_get=yes
+      tags:
+      - packages
+
+    - name: install mc
+      apt: name=mc state=latest force_apt_get=yes
+      tags:
+      - package
+
+    - name: install chronyc
+      apt: name=chronyc state=latest force_apt_get=yes
+      tags:
+      - package
+      - new
+
+    - name: install docker
+      apt: name=docker.io state=latest force_apt_get=yes
+      tags:
+      - docker
+
+    - name: install Docker module for Python
+      pip: executable=/usr/bin/pip3 name=docker
+      tags:
+      - docker
+
+
+# Need a condition here for docker systems which don't have systemd
+# Services
+    - name: ensure sshd running
+      systemd: name=sshd enabled=yes state=started
+      tags:
+      - services
+      - sshd
+
+    - name: activate docker
+      systemd: name=docker enabled=yes state=started
+      tags:
+      - services
+      - docker
+
+# Docker image pulls
+    - name: Log into DockerHub
+      docker_login:
+        username: mgreville
+        password: 64^y4XuyV/Ja
+      tags:
+      - docker
+
+    - name: pull the alpine:latest image
+      docker_image:
+        name: alpine:latest
+        source: pull
+      tags:
+      - docker
+
+    - name: pull the ubuntu:18.04 image
+      docker_image:
+        name: ubuntu:18.04
+        source: pull
+      tags:
+      - docker
+
+    - name: pull the python:3.6 image
+      docker_image:
+        name: python:3.6-stretch
+        source: pull
+      tags:
+      - docker
+
+# Cleanup
+    - name: Remove useless packages from the cache
+      apt:
+        autoclean: yes
+
+    - name: Remove dependencies that are no longer required
+      apt:
+        autoremove: yes
+
