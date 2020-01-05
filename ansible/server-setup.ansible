@@ -12,7 +12,7 @@
         msg: "running setup on host {{ ansible_facts['hostname'] }} using {{ ansible_facts['lsb']['description'] }} at {{ ansible_facts['date_time']['time'] }} on the {{ ansible_facts['date_time']['date'] }}"
 
 # Users
-    - name: Add the user 'mgreville'
+    - name: add the user 'mgreville'
       user:
         name: mgreville
         state: present
@@ -23,6 +23,45 @@
         generate_ssh_key: yes
         ssh_key_bits: 2048
         ssh_key_file: .ssh/id_rsa
+
+# Dotfiles
+    - name: clone dot files repo
+      become_user: mgreville
+      git:
+        repo: ssh://git@github.com/mgreville/dotfiles.git
+        dest: /home/mgreville/Projects/dotfiles
+      tags:
+      - github
+      - dotfiles
+
+    - name: install dot files
+      become_user: mgreville
+      command: /home/mgreville/Projects/dotfiles/install.sh
+      args:
+        chdir: /home/mgreville/Projects/dotfiles/
+      tags:
+      - dotfiles
+
+    - name: install dot files
+      become_user: mgreville
+      command: /home/mgreville/Projects/dotfiles/install-vundle+plugins.sh
+      tags:
+      - dotfiles
+
+# Git config
+#    - name: install git configuration
+#    - git:
+#    repo: ssh://git@github.com/mylogin/hello.git
+#    dest: /home/mylogin/hello
+
+# Vim
+#    - name: execute vim vundle plugins
+
+# Keys
+    - name: Install Microsoft apt key
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        keyring: /etc/apt/trusted.gpg.d/microsoft.gpg
 
 # Software
     - name: install vim
@@ -35,12 +74,27 @@
       tags:
       - package
 
-    - name: install chronyc
-      apt: name=chronyc state=latest force_apt_get=yes
+    - name: install screen
+      apt: name=screen state=latest force_apt_get=yes
+      tags:
+      - package
+
+    - name: install nginx
+      apt: name=nginx state=latest force_apt_get=yes
       tags:
       - package
       - new
 
+    - name: install VS Code
+      apt: name=code state=latest force_apt_get=yes
+      tags:
+      - packages
+
+    - name: install chrony
+      apt: name=chrony state=latest force_apt_get=yes
+      tags:
+      - package
+ 
     - name: install docker
       apt: name=docker.io state=latest force_apt_get=yes
       tags:
@@ -51,6 +105,15 @@
       tags:
       - docker
 
+    - name: install AWS CLI
+      pip: executable=/usr/bin/pip3 name=aws-cli
+      tags:
+      - aws
+
+    - name: install AWS SAM CLI
+      pip: executable=/usr/bin/pip3 name=aws-sam-cli
+      tags:
+      - aws
 
 # Need a condition here for docker systems which don't have systemd
 # Services
@@ -104,3 +167,4 @@
       apt:
         autoremove: yes
 
+#Install crhoncyc makestep command
