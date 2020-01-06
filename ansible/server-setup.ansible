@@ -36,17 +36,18 @@
 
     - name: install dot files
       become_user: mgreville
-      command: /home/mgreville/Projects/dotfiles/install.sh
+      command: ls -l .
+      #command: ./install.sh
       args:
-        chdir: /home/mgreville/Projects/dotfiles/
+        chdir: /home/mgreville/Projects/dotfiles
       tags:
       - dotfiles
 
-    - name: install dot files
+    - name: install vim vundle plugins files
       become_user: mgreville
       command: /home/mgreville/Projects/dotfiles/install-vundle+plugins.sh
-      tags:
-      - dotfiles
+#      tags:
+#      - dotfiles
 
 # Git config
 #    - name: install git configuration
@@ -55,7 +56,7 @@
 #    dest: /home/mylogin/hello
 
 # Vim
-#    - name: execute vim vundle plugins
+#    - name: execute 
 
 # Keys
     - name: Install Microsoft apt key

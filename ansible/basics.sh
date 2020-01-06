@@ -1,4 +1,4 @@
-#/bin/bash
+#!/usr/bin/env bash
 
 apt install -y samba
 apt install -y virt-manager

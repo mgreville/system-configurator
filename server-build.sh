@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo $SHELL
 
@@ -11,9 +11,10 @@ apt-get update -y
 
 python/install-python.sh
 ansible/install-ansible.sh
-docker/install-docker.sh
 
 ansible-playbook -v -b -i localhost, ansible/add-repos.ansible
 apt-get update -y
 ansible-playbook -v -b -i localhost, ansible/server-setup.ansible -e 'ansible_python_interpreter=/usr/bin/python3'
+
+
 
