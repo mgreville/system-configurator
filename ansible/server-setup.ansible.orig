@@ -5,12 +5,8 @@
   gather_facts: true
   hosts: all
   #become: true
+<<<<<<< HEAD
   tasks:
-#    - import_role:
-#        name: suzuki-shunsuke.pyenv-module
-#      tags:
-#      - pyenv
-
 
     - name: print run datetime
       debug:
@@ -196,7 +192,10 @@
       apt: name=code state=latest force_apt_get=yes
       tags:
       - packages
+=======
+>>>>>>> Adds some things
 
+<<<<<<< HEAD
     - name: install chrony
       apt: name=chrony state=latest force_apt_get=yes
       tags:
@@ -326,4 +325,12 @@
         source: pull
       tags:
       - docker
+=======
+  tasks:
+>>>>>>> Adds some things
 
+    - import_role:
+        name: suzuki-shunsuke.pyenv-module
+      tags:
+      - pyenv 
+ 
