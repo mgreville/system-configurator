@@ -7,13 +7,13 @@ echo $SHELL
 sed -i 's/us.archive/au.archive/' /etc/apt/sources.list
 echo "apt update disabled"
 
-apt-get update -y
+#apt-get update -y
 
 python/install-python.sh
 ansible/install-ansible.sh
 
-ansible-playbook -v -b -i localhost, ansible/add-repos.ansible
-apt-get update -y
+#ansible-playbook -v -b -i localhost, ansible/add-repos.ansible
+#apt-get update -y
 ansible-playbook -v -b -i localhost, ansible/server-setup.ansible -e 'ansible_python_interpreter=/usr/bin/python3'
 
 

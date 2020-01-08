@@ -11,6 +11,28 @@
       debug:
         msg: "running setup on host {{ ansible_facts['hostname'] }} using {{ ansible_facts['lsb']['description'] }} at {{ ansible_facts['date_time']['time'] }} on the {{ ansible_facts['date_time']['date'] }}"
 
+# Keys
+    - name: install Microsoft apt key
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        keyring: /etc/apt/trusted.gpg.d/microsoft.gpg
+        state: present
+
+# Repos
+    - name: install VS Code repo
+      become: yes
+      apt_repository:
+        repo: deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main
+        filename: vscode
+        state: present
+
+# Update apt cache
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+
 # Users
     - name: add the user 'mgreville'
       user:
@@ -46,23 +68,17 @@
     - name: install vim vundle plugins files
       become_user: mgreville
       command: /home/mgreville/Projects/dotfiles/install-vundle+plugins.sh
-#      tags:
-#      - dotfiles
+      tags:
+      - dotfiles
 
 # Git config
 #    - name: install git configuration
-#    - git:
-#    repo: ssh://git@github.com/mylogin/hello.git
-#    dest: /home/mylogin/hello
-
-# Vim
-#    - name: execute 
-
-# Keys
-    - name: Install Microsoft apt key
-      apt_key:
-        url: https://packages.microsoft.com/keys/microsoft.asc
-        keyring: /etc/apt/trusted.gpg.d/microsoft.gpg
+#      git:
+#        repo: ssh://git@github.com/mgreville/gitconfig.git
+#        dest: /home/mgreville/Projects/gitconfig
+#      tags:
+#      - github
+#      - dotfiles
 
 # Software
     - name: install vim
@@ -87,7 +103,7 @@
       - new
 
     - name: install VS Code
-      apt: name=code state=latest force_apt_get=yes
+      apt: name=code state=absent force_apt_get=yes
       tags:
       - packages
 
@@ -101,13 +117,21 @@
       tags:
       - docker
 
+# Pip packages
     - name: install Docker module for Python
       pip: executable=/usr/bin/pip3 name=docker
       tags:
       - docker
 
+    - name: install Python Debugger module for Python
+      pip: executable=/usr/bin/pip3 name=ptvsd
+      tags:
+      - pip
+      - vscode
+      - new
+
     - name: install AWS CLI
-      pip: executable=/usr/bin/pip3 name=aws-cli
+      pip: executable=/usr/bin/pip3 name=awscli
       tags:
       - aws
 
