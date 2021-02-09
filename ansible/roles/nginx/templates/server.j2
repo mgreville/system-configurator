@@ -1,0 +1,26 @@
+{% for item in services %}
+
+upstream {{ item }} {{ '{' }}
+  keepalive 32;          # keepalive connections
+  server 127.0.0.1:{{ services[item].port }}; # {{ item }} ip and port
+{{ '}' }}
+
+{% endfor %}
+
+server {
+
+  server_name {{ ansible_hostname }};
+  listen 80;
+
+  server_name_in_redirect on;
+  port_in_redirect on;
+ 
+  location / {
+    return 301 $scheme://$server_name/jenkins;
+  }
+
+{% for item in services %}
+  {% include services[item].name %}
+{% endfor %}
+
+}

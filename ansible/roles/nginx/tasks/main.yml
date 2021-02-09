@@ -1,0 +1,92 @@
+---
+# tasks file for nginx
+# https://github.com/William-Yeh/ansible-nginx/
+
+- name: emit msg
+  debug:
+    msg: Ensuring nginx installed
+  tags:
+    - nginx
+
+- name: ensure nginx is installed
+  apt: name=nginx state=latest force_apt_get=yes
+  tags:
+    - nginx
+
+- name: load config templates
+  vars:
+    services:
+      jenkins:
+        name: 'jenkins.j2'
+        port: 8080
+      nexus:
+        name: 'nexus.j2'
+        port: 8081
+      portainer:
+        name: 'portainer.j2'
+        port: 9000
+      netdata:
+        name: 'netdata.j2'
+        port: 19999
+  template:
+    src: "templates/server.j2"
+    dest: "/etc/nginx/sites-enabled/server.conf"
+    owner: root
+    group: root
+    mode: 0640
+  notify:
+  - reload nginx
+  tags:
+    - nginx
+
+#- name: load config templates
+#  vars:
+#    list: ['jenkins.j2','nexus.j2']
+#  template:
+#    src: "templates/server.j2"
+#    dest: "/etc/nginx/sites-enabled/server.conf"
+#    owner: root
+#    group: root
+#    mode: 0640
+#  notify:
+#  - reload nginx
+#  tags:
+#    - nginx
+
+# In the template try {% include file/path/to/my/address.txt %}
+
+#- name: load config templates
+#  template:
+#    src: templates/jenkins.j2
+#    dest: /etc/nginx/sites-available/jenkins.conf
+#    owner: root
+#    group: root
+#    mode: 0640
+#  tags:
+#    - nginx
+
+#- name: link jenkins config
+#  file:
+#    src: /etc/nginx/sites-available/jenkins.conf
+#    dest: /etc/nginx/sites-enabled/jenkins.conf
+#    state: link
+#    owner: root
+#    group: root
+#  notify:
+#    - reload nginx
+#  tags:
+#    - nginx
+
+
+# - name: link nexus config
+#  file:
+#    src: /etc/nginx/sites-available/nexus.conf
+#    dest: /etc/nginx/sites-enabled/nexus.conf
+#    state: link
+#    owner: root
+#    group: root
+#  notify:
+#    - reload nginx
+#  tags:
+#    - nginx
+

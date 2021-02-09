@@ -1,2 +1,2 @@
 # system-configurator
-Run this after server install
+Run `server-build.sh` after server install

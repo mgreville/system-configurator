@@ -12,9 +12,11 @@ echo "apt update disabled"
 python/install-python.sh
 ansible/install-ansible.sh
 
-#ansible-playbook -v -b -i localhost, ansible/add-repos.ansible
+#ansible -l
+ls -l
+date +%H
+date +%H
+date +%Hnewgrp dockernewgrp mgrevillenewgrp libvirtnewgrp mgrevilleplaybook -v -b -i localhost, ansible/add-repos.ansible
 #apt-get update -y
 ansible-playbook -v -b -i localhost, ansible/server-setup.ansible -e 'ansible_python_interpreter=/usr/bin/python3'
-
-
 
